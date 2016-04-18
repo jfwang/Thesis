@@ -1,0 +1,199 @@
+% !Mode:: "Tex:UTF-8"
+\chapter{DAPro 平台的设计与实现}
+    DAPro，全称Distributed Algorithm Fast Prototyping Platform，旨在为分布式算法的设计、实现以及测试提供一个快速原型平台。DAPro 是基于Discrete Event Simulation(离散事件模拟，以下简称为DES) 理念而设计的。在DES 中，系统的运作是由一系列在离散时间发生的事件所驱动的。DAPro 的设计是面向分布式算法的，我们目前采用分布式计算中的消息传递模型(Message Passing Model)。
+
+    \section{DAPro 总体概述}
+    总体概述部分将对DAPro 的主要模块和运行流程进行介绍。DAPro 包括了Event、Engine、System、Communication 和FailureGenerator 模块，DAPro 的运行流程揭示了模块间的调用关系。
+
+    DAPro 主要由如下几个模块构成，各模块的功能和大体实现描述如下：
+    \begin{description}
+        \item[Event] Event 的定义包含两个要素，一为Event 的触发时间(triggeringClock)，二为Event 的处理函数(IEventHandler 实例)。在实例化一个Event 对象时，需要确定以上两个参数。事件的触发时间可以相同，表示事件同时执行。
+            
+            凡是需要处理Event 的实体(SimulationObject 实例)均需要实现IEventHandler 接口，并实现其中的dispatch(Event e) 抽象方法用以对Event 做任何必要的处理。
+            
+            IEventCollection 是EventList(事件列表)的抽象实现，PQEventCollection 是EventList 的优先级队列版本的具体实现。
+        
+        \item[Engine] Engine 采用Singleton 模式，实现了DES 的核心控制功能，其主要逻辑由方法run 实现：
+            \begin{itemize}
+                \item 从EventList 中取出下一个事件e，这也是即将要调度执行的事件。
+                \item 将模拟时钟Clock 推进到事件e 的triggeringClock，表示即将执行该事件。
+                \item 调用事件的action 方法将事件交由其IEventHandler 处理。
+            \end{itemize}
+            
+            Engine 会重复以上步骤，直到模拟时钟超过了最大允许时间或事件列表为空。
+            
+            在事件e 的执行过程中，可能产生新的事件。新产生的事件需要加入到事件列表中，以便Engine 调度执行。事件的加入有两种方式，scheduleEvent() 和scheduleEventAtOnce()，前者会将事件延迟一个固定或者随机的时间，后者会将事件直接加入事件列表，不改变事件的处理时间。
+        
+        \item[System] System 包含了系统的拓扑结构和组成要素，系统拓扑由进程\footnote{根据Nancy Lynch《分布式算法》：“It is often useful to think of them (computing elements) instead as logical software ‘processes’, running on (but not identical to) the actual hardware processors.”}节点和节点间的连接关系组成。
+            \begin{figure}[ht]
+                \centering
+                % Requires \usepackage{graphicx}
+                \includegraphics[width=10cm]{SystemTopology}\\
+                \caption{系统拓扑图}\label{SystemTopology}
+            \end{figure}
+            
+            DAPro 对系统拓扑的描述见图\ref{SystemTopology}。其中：
+            \begin{itemize}
+                \item Process 对象是事件的执行实体。系统拓扑中的每个节点都表示一个进程，每个进程都有一个独一无二的标识符，系统中使用自然数来表示。进程用于存储信息以及对事件进行处理。
+                \item Link 对象表示信道，负责消息的传递。Link 对象由Connector 对象以链表的形式组装而成。在此结构的基础上，Connector 负责最底层信息处理，不同类型的Connector 可以模拟实现网络通信的不同特性。
+                \item Session 对象维护了两个进程及其连接两者的信道，即进程fromProcess、toProcess 和信道link。当两个进程需要通信时，可以通过Session 找到相应的信道，进行信息的传输。
+                \item System 负责建立、维护和查询系统拓扑。系统拓扑包含Process 和Session 两部分，System 使用id2Process 和pair2Session 两个HashMap 数据结构来表示系统拓扑结构。
+            \end{itemize}
+        
+        \item[Communication] 系统中进程间通信由Communication 完成。Communication 实现了消息传递系统中消息发送功能的封装，包括创建消息事件，并将该事件加入到事件列表交由Engine 调度。Communication 需要找到消息发送方与接收方的信道，实现消息的传递，从而最终将消息事件交付到接收方执行。
+        
+        \item[FailureGenerator] FailureGenerator 是DAPro 的故障产生模块，用于模拟产生不可靠系统中可能出现的各类故障，包括崩溃故障、拜占庭故障等。故障的模拟也是通过创建故障事件，交由相应的进程处理。系统中故障的数量可能会有限制，因此需要相应地对故障的产生进行控制。
+    \end{description}
+
+    DAPro 的运行需要各个模块相互协调，共同作用。系统的核心是事件(Event)，事件由系统引擎(Engine)调度，交由相应的事件处理实体执行；进程之间的通信由通信(Communication)模块完成，Communication 需要查询系统拓扑(System)，将消息通过信道传递到目标进程，从而完成进程间的消息传递。
+
+    \section{DAPro 各模块详细设计}
+    本节我们讨论DAPro 系统的模块设计。根据总体概述中的模块划分，我们会依次对系统中每个模块的功能和实现进行详细分析。
+
+    \subsection{Event 模块}
+    Event 模块是DAPro 系统核心模块之一，事件是整个系统的核心概念。Event 模块中包含了Event 类及其子类，构成了系统能够模拟的事件的集合，其类图如图\ref{Event}所示。
+
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{Event}\\
+        \caption{Event 模块类图}\label{Event}
+    \end{figure}
+
+    下面我们分别对模块中的类和接口的功能和实现进行说明：
+    \begin{description}
+      \item[Event] 所有Event 类均含有参数触发时间triggeringClock 和处理实体handler。事件被执行的顺序由触发时间决定，通过在事件触发时间上加上一定的延迟可以对事件执行顺序进行调度；而事件的处理实体决定了事件交由何种实体处理。一个事件被Engine 调度后，会首先调用其action 方法，将该事件交付给其处理实体进行处理。注意action 方法被定义为final，因此Event 的子类不能覆盖该方法，action 方法的全部功能即为调用handler 的dispatch 方法对事件进行处理。
+      \item[IEventHandler] IEventHandler 接口是所有能够对事件进行处理的实体的抽象。系统中的Process、Session、Link 等类均需要实现该接口，并实现其中的dispatch 方法对事件进行相应处理。
+      \item[ProcessStartEvent] ProcessStartEvent 是一种特殊的事件，用于某些类型进程的启动。除了继承Event 类的特性和操作外，它不具备其他内容。ProcessStartEvent 事件一般与ProcessStartAction 相对应。
+      \item[MessageEvent] 在消息传递系统中，最为常见的事件是消息事件。除了事件的触发时间和处理实体，MessageEvent 类中还包含了消息内容、消息的发送方和消息的接收方。进程对象通过接收处理消息事件来接收消息，并借助Communication 模块创建消息事件发送消息，从而可以实现进程之间的信息交互。
+          
+          DAPro 系统中各种类型的消息由Message 类及其子类表示。Message 类是一个基类，我们可以通过继承Message 类定义更为复杂的消息类型。SpanningTreeMessage 类和ConsensusMessage 类都是针对具体问题定义的消息类型，我们会在后面的实现部分具体分析。
+      \item[RoundEvent] 在同步系统中，进程的运行是以周期为单位的。DAPro 系统中，进程按周期执行是通过接收处理相应的RoundEvent 实现的。进程接收到一个RoundEvent，即表示一个新的周期开始。在每个周期中，消息发送和本地计算环节可能需要分隔开，因此我们定义了RoundEvent 的两个子类：MessagePassingRoundEvent 类和LocalComputationRoundEvent 类，前者代表一个周期中的消息发送环节，后者代表一个周期中的本地计算环节，两者共同构成了一个完整的周期。除了继承Event 的特性，RoundEvent 还包含有roundNo 参数表示周期编号，有些进程对象需要根据周期编号来决定其行为。
+    \end{description}
+
+    \subsection{Engine 模块}
+    Engine 模块同样是DAPro 系统核心模块之一，采用单例模式实现。作为系统的引擎，Engine 模块控制事件的调度执行，其模块类图如图\ref{Engine}。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{Engine}\\
+        \caption{Engine 模块类图}\label{Engine}
+    \end{figure}
+
+    Engine 维护了一个全局的系统时间和一个事件列表，系统时间是事件调度运行的时间依据，而事件列表保存了Engine 能够调度的事件集合。Engine 主要完成的工作是事件的调度执行，事件的调度由scheduleEvent 和scheduleEventAtOnce 两个方法实现，而事件的执行由run 方法实现。事件调度的两种方法主要逻辑相同，即将要调度的事件插入到事件列表中，区别在于scheduleEvent 能够为事件的触发时间加上一个延迟。系统通过调用Engine 的run 方法开始运行，从事件列表中取出事件，更新系统时间并执行该事件，系统会重复这一行为直到事件列表为空或者系统时间到达上限。
+
+    事件列表的实现可以有多种，但至少要包括插入、删除、判断是否为空三个功能，即接口IEventCollection 中定义的三个方法。我们所实现的PQEventCollection 实现了IEventCollection 接口，采用优先队列保存事件，方便了事件按触发时间调度。
+
+    \subsection{System 模块}
+    System 模块是DAPro 系统的基础模块。它包含了组成系统拓扑的各类元素：包括Session、Link、Connector和Process，而其中的DAProSystem 类则维护了系统拓扑和系统特征参数。System 模块中各类关系如图\ref{System}所示。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{System}\\
+        \caption{System 模块类图}\label{System}
+    \end{figure}
+    
+    了解了类之间的关系后，下面我们将一一阐述各类的具体实现。
+    \begin{description}
+      \item[SimulationObject] SimulationObject 类是一个抽象类，它表示所有DAPro 系统中能够被模拟的对象，包括Communication、Process、Session、Engine、Event 等，这些类都将继承SimulationObject 类。
+      \item[DAProSystem] DAProSystem 类采用单例模式实现，负责DAPro 系统拓扑的构建、维护和查询，并记录了系统中进程个数和发生故障的进程个数等信息。DAProSystem 类主要维护了两个HashMap，id2Process 和pair2Session，其中id2Process 维护了进程与其标识符的对应关系，pair2Session 则维护了Pair(即一对进程) 和Session 的对应关系。之所以采取HashMap 结构，一是为了存取方便，二是数据大小不受限制。有了以上两个HashMap 结构，就可以表示整个DAPro 系统的基本拓扑结构。DAProSystem 类使用registerProcess 和registerSession 方法来构建和维护系统拓扑，在给出某个id 或者pair 时可以使用getProcess 或getSession 方法得到对应的Process 或者Session。除此以外，DAProSystem 还保存了系统中进程的个数、发生故障的进程数量和最多能发生故障的进程数量信息。系统拓扑的构建需要在系统开始运行即调度事件之前完成，系统运行过程中也会通过DAProSystem 来获取系统拓扑信息。
+      \item[Session] Session 类维护了两个进程及两者之间的信道，即每个Session 类的实例都包含两个进程对象(fromProcess 和toProcess) 和一个Link 对象。Session 类实现了IEventHandler 接口，故而可以对事件进行处理。其处理过程仅仅是将事件进一步交付给该Session 的Link 对象来处理。
+      \item[Link] Link 类即表示两个进程之间的信道，每个Link 对象代表两个进程对象之间的一个单向连接。一个Link 对象包含了一个由Connector 对象组成的链表和该链表的一个迭代器。Link 类会对交付的事件做进一步处理，其处理逻辑为：找到并将事件交付给链表中下一个Connector 对象，Connector 对象会对其做相应处理；如果不存在下一个Connector 对象，即事件已经遍历了链表中的所有Connector 对象，那么事件会被最终交付给toProcess 对象执行。
+      \item[Connector] Connector 类是Link 类的主要组成，它负责最底层的信息处理。不同种类的Connector 可以用来模拟进程通信过程中网络各层的不同特性。目前我们主要考虑网络通信过程中的消息延迟。FixedDelayConnector 和RandomDelayConnector 两种Connector 分别表示具有固定和随机延迟的两种Connector，用于对事件进行延时处理。具体的处理过程为将事件的处理时间加上相应的延迟，重新由Engine 进行调度。
+    \end{description}
+    
+    Process 尽管也是System 模块的一部分，但是由于其特殊性，我们将其作为System 的一个子模块单独进行说明。
+    
+    进程是系统的运行实体，大多数事件都是交由进程对象进行实质性的处理。Process 类的子类可以根据需求在继承Process 类的基础上实现各自的功能。随着系统规模的扩大，进程的种类会更多，它们共同构成了Process 子模块，其类图如图\ref{Process}所示。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{Process}\\
+        \caption{Process 模块类图}\label{Process}
+    \end{figure}
+            
+    Process 类中包含了进程的标识符、状态和事件与相应动作的对应关系信息，在实例化一个进程对象时，需要指定事件和动作的对应关系以确定对事件做何种处理。注意即便对于同一类事件，在不同的Process 子类也可以对应不同的动作，例如MessageEvent，在SpanningTreeProcess 类中对应于SpanningTreeAction，而在ConsensusProcess 类中则对应于ConsensusAction；同时不同类型的事件也可以对应于同一动作，例如在ConsensusProcess 中MessageEvent 和RoundEvent 均对应于ConsensusAction。这一设计是为了使进程更为灵活地处理各类事件。Process 类同样实现了IEventHandler 接口，使用dispatch 方法对事件进行处理：根据事件类型在event2action 中找到对应的IProcessAction，调用其execute 方法对事件进行处理。Process 类的核心是抽象方法run，它负责进程的运行逻辑，不同类型的进程有不同的运行逻辑，通过覆盖run 方法实现。
+          
+    模块中的SimpleProcess、SpanningTreeProcess 和ConsensusProcess 类都是Process 类的子类，除了id、状态等信息，它们可以包含额外的信息，例如SpanningTreeProcess 对象中就保存了其邻居节点信息等。Process 的子类均要实现各自的run 方法，以确定其各自在运行时的行为。我们会在接下来的算法实现中详细讨论Process 子类的实现。
+          
+    IProcessAction 接口中包含了一个抽象方法execute，当事件被交付到相应的进程对象之后，由execute 方法对事件进行处理。对于IProcessAction 接口的不同实现对应于事件的不同处理方式。ProcessStartAction、 MessageAction、 SpanningTreeAction 和ConsensusAction 均实现了IProcessAction 接口，也相应实现了execute 方法，因而可以对事件进行不同的处理。
+    
+    \subsection{Communication 模块}
+    Communication 模块主要完成DAPro 系统的通信功能，由Communication 抽象类及其子类组成。目前实现的Communication 子类有MessagePassingCom 子类，主要实现消息传递系统中进程之间的通信。其模块类图如图\ref{Communication}所示。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{Communication}\\
+        \caption{Communication 模块类图}\label{Communication}
+    \end{figure}
+
+    Communication 类只是对系统中进程通信模式的抽象，不同的系统可以有不同的通信方式，因此Communication 类可以有不同的子类。消息传递系统中进程之间通过发送消息来相互通信，MessagePassingCom 类主要实现消息传递系统中的通信功能。
+
+    MessagePassingCom 类采用单例模式实现，主要实现了进程对象间消息的发送，同时也可以是消息事件的处理实体。消息发送分为两个步骤：首先创建消息事件，然后将事件交由Engine 调度运行。消息事件需要指定发送方和接收方和消息内容，事件的处理实体即为MessagePassingCom 实例本身。MessagePassingCom 类不对消息事件做直接处理，它根据消息的发送方和接收方找到相应的Session，然后将事件交付给Session 处理。
+
+    \subsection{FailureGenerator 模块}
+    FailureGenerator 模块负责随机产生故障事件，模拟进程发生故障的情况。FailureGenerator 模块由基类FailureGenerator 类及其子类组成，其中子类是FailureGenerator 类对于不同类型的故障的不同实现。我们目前实现的CrashFailureGenerator 类就是针对崩溃故障设计的子类。FailureGenerator 模块类图见图\ref{FailureGenerator}。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{FailureGenerator}\\
+        \caption{FailureGenerator 模块类图}\label{FailureGenerator}
+    \end{figure}
+
+    CrashFailureGenerator 类同样采用单例模式实现，是系统的崩溃故障发生器。产生故障的功能主要由generateFailure 方法实现，其逻辑为：对于给定的一个进程，如果其状态为正常运行，那么随机决定其是否发生故障；如果发生故障并且目前系统中发生故障的进程数量尚未达到上限，那么做如下处理：系统中发生故障的进程数量加$1$，该进程的状态改变为故障状态。
+
+    \section{一个简单的实例}
+    通过对DAPro 系统概要设计和详细设计的分析，我们已经基本了解了DAPro 系统的框架结构和实现细节。本节我们通过一个实例，来分析DAPro 系统是如何运行一个分布式算法的，以使读者对DAPro 系统有更加深刻的理解。
+
+    \subsection{算法描述}
+    深度优先搜索生成树(DFS 生成树)的构建是一个基本的分布式算法，也是很多复杂分布式算法的重要组成。我们要实现的是没有指定根节点的DFS 生成树构建算法。在指定根节点情况下，DFS 生成树的构建通过根节点以深度优先的方式向其他节点发送消息来实现，每次会有一个节点加入到刚刚生成的DFS 树中。而在没有指定根节点的情况下，每个节点代表的进程会自发地以自己为根节点构建DFS 树。我们事先为每个节点指定了各不相同的标识符(为自然数)，并用变量$leader$ 保存该节点目前所见的最大标识符，因此当两个DFS 树想要合并同一个节点(不一定同时)时，该节点会加入到根节点标识符较大的DFS 树中。
+
+    初始时，所有节点将$leader$ 设置为其自身的标识符，之后以深度优先的顺序向其邻居发送包含其标识符的DFS 消息。当一个节点接收到一个DFS 消息后，它会将其中的与自身$leader$ 的值进行比较。如果自身$leader$ 值较小，则该节点需要加入到消息发送方所在的DFS 树，发送方即为其父节点；如果两者相等，则该节点与消息发送方在同一DFS 树中；如果自身$leader$ 值较大，则消息发送方所在DFS 树的构建过程结束，因为其根节点的标识符显然不是最大。
+
+    \subsection{算法实现}
+    为了实现以上算法，我们通过继承Process 类实现了SpanningTreeProcess 类。根据算法描述，SpanningTreeProcess 类中定义了$parent$、$leader$、$children$ 和$unexplored$ 等变量用来保存生成树构建过程中需要维护的信息。其类图如图\ref{SpanningTreeProcess} 所示。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{SpanningTreeProcess}\\
+        \caption{SpanningTreeProcess 类图}\label{SpanningTreeProcess}
+    \end{figure}
+
+    SpanningTreeProcess 的run 方法覆盖了父类Process 中的run 方法，实现了算法的主体。由于run 方法需要根据接收到的事件产生不同的行为，而run 方法又是不带参数的，因此我们定义了变量receivedEvent 保存交付给SpanningTreeProcess 对象执行的事件。算法中存在或者说需要处理的有两类事件，一类是开始事件，另一类是消息事件，在SpanningTreeProcess 类中这两类事件对应的action 均为SpanningTreeAction。SpanningTreeAction 实现了IProcessAction 接口，其中的execute 方法会调用SpanningTreeProcess 的setEvent 方法，将execute 方法的参数event 保存到参数process (必须为SpanningTreeProcess 的实例) 的receivedEvent 中，然后开始调用参数process 的run 方法。
+
+    根据算法所需的消息类型，我们定义了SpanningTreeMessage 消息类，其类图如图\ref{SpanningTreeMessage}所示。类中针对算法中的leader、parent、already 三种类型的消息定义了消息类型type，消息的内容为进程对象的标识符，用long 类型的value 表示。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=12cm]{SpanningTreeMessage}\\
+        \caption{SpanningTreeMessage 类图}\label{SpanningTreeMessage}
+    \end{figure}
+
+    \subsection{结果简析}
+    我们将以一个包含有五个节点的连通图为例，测试算法能否达到预期的效果。我们定义五个SpanningTreeProcess 进程对象，按照图\ref{Figure2}完成对系统拓扑的构建。在进程对象开始运行之前，我们需要对其进行初始化。初始化的目的主要是确定其邻居节点，即neighbors 参数包含哪些节点，算法的实现需要用到这一信息。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=10cm]{Figure2}\\
+        \caption{测试用例拓扑图}\label{Figure2}
+    \end{figure}
+
+    在Engine 开始运行之前，需要为每个进程分配开始事件，并加入到Engine 的事件列表里。启动Engine，系统便会开始处理这些开始事件，使得所有进程开始工作，之后进程间就会开始进行信息的交互，直至生成树构建完毕。算法的执行结果如图\ref{SpanningTreeResult}左侧所示，相应的，我们构建了如图\ref{SpanningTreeResult}右侧所示的DFS 生成树。
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=12cm]{SpanningTreeResult}\\
+        \caption{测试用例结果图}\label{SpanningTreeResult}
+    \end{figure}
+
+    \subsection{算法的运行流程}
+    为了更为清晰地展示DAPro 平台的工作原理，下面我们开始分析上述算法在DAPro 系统上的运行流程，如图\ref{Sequence}所示。
+
+    \begin{figure}[ht]
+        \centering
+        % Requires \usepackage{graphicx}
+        \includegraphics[width=14cm]{figures/Sequence}\\
+        \caption{DAPro 顺序图}\label{Sequence}
+    \end{figure}
+
+    经过一系列的初始化动作，系统拓扑的构建、SpanningTreeProcess 对象的初始化都已完成，这时启动Engine，即调用Engine 的run 方法。根据run 方法的执行逻辑，Engine 会从事件列表中取出优先级最高的事件，即初始事件startP1，调用其action 方法执行。进程对象p1 是startP1 事件的执行实体。假设执行过程中p1 试图向另一个进程p2 发送消息，那么它将组装消息，并调用MessagePassingCom 类中的send2 方法将其发送给p2。MessagePassingCom 类中的dispatch 方法会找到相应的session，消息逐层被交付到相应的Link、Connector 对象，在完成传输过程后最终被交付到p2。p2 接收到消息事件后，就可以对其进行适当的处理。
