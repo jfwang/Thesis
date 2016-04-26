@@ -50,14 +50,3 @@
   year={2011},
   publisher={JMLR. org}
 }
-
-@article{salton1975vector,
-  title={A vector space model for automatic indexing},
-  author={Salton, Gerard and Wong, Anita and Yang, Chung-Shu},
-  journal={Communications of the ACM},
-  volume={18},
-  number={11},
-  pages={613--620},
-  year={1975},
-  publisher={ACM}
-}

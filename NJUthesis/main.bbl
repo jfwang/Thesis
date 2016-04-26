@@ -1,0 +1,71 @@
+\begin{thebibliography}{1}
+\providecommand{\bibauthor}[1]{#1}
+\providecommand{\bibeditor}[1]{#1}
+\providecommand{\bibtranslator}[1]{#1}
+\providecommand{\bibtitle}[1]{#1}
+\providecommand{\bibbooktitle}[1]{#1}
+\providecommand{\bibjournal}[1]{#1}
+\providecommand{\bibmark}[1]{#1}
+\providecommand{\bibcountry}[1]{#1}
+\providecommand{\bibpatentid}[1]{#1}
+\providecommand{\bibedition}[1]{#1}
+\providecommand{\biborganization}[1]{#1}
+\providecommand{\bibaddress}[1]{#1}
+\providecommand{\bibpublisher}[1]{#1}
+\providecommand{\bibinstitution}[1]{#1}
+\providecommand{\bibschool}[1]{#1}
+\providecommand{\bibvolume}[1]{#1}
+\providecommand{\bibnumber}[1]{#1}
+\providecommand{\bibversion}[1]{#1}
+\providecommand{\bibpages}[1]{#1}
+\providecommand{\bibmodifydate}[1]{#1}
+\providecommand{\bibcitedate}[1]{#1}
+\providecommand{\bibyear}[1]{#1}
+\providecommand{\bibdate}[1]{#1}
+\providecommand{\biburl}[1]{\newline\url{#1}}
+
+\bibitem{xiang2015nlp}
+\bibauthor{向李兴}\@.
+  \bibtitle{基于自然语义处理的裁判文书推荐系统设计与实现}\bibmark{[D]}\@.
+  \bibaddress{[S.l.]}\thinspace{}\textnormal{: }\bibschool{南京大学}\@,
+  \bibyear{2015}\@.
+
+\bibitem{aggarwal2012mining}
+\bibauthor{AGGARWAL C~C\@, ZHAI C}\@. \bibbooktitle{Mining text
+  data}\bibmark{[M]}\@. \bibaddress{[S.l.]}\thinspace{}\textnormal{:
+  }\bibpublisher{Springer Science \& Business Media}\@, \bibyear{2012}\@.
+
+\bibitem{tsoumakas2006multi}
+\bibauthor{TSOUMAKAS G\@, KATAKIS I}\@. \bibtitle{Multi-label classification:
+  An overview}\bibmark{[J]}\@. \bibjournal{Dept. of Informatics, Aristotle
+  University of Thessaloniki, Greece}\@, \bibyear{2006}\@.
+
+\bibitem{silla2011survey}
+\bibauthor{SILLA~JR C~N\@, FREITAS A~A}\@. \bibtitle{A survey of hierarchical
+  classification across different application domains}\bibmark{[J]}\@.
+  \bibjournal{Data Mining and Knowledge Discovery}\@, \bibyear{2011}\@,
+  \bibvolume{22}\bibnumber{(1-2)}\thinspace{}\textnormal{:
+  }\bibpages{31\thinspace{}\textnormal{--}\thinspace{}72}\@.
+
+\bibitem{barutcuoglu2006hierarchical}
+\bibauthor{BARUTCUOGLU Z\@, SCHAPIRE R~E\@, TROYANSKAYA O~G}\@.
+  \bibtitle{Hierarchical multi-label prediction of gene
+  function}\bibmark{[J]}\@. \bibjournal{Bioinformatics}\@, \bibyear{2006}\@,
+  \bibvolume{22}\bibnumber{(7)}\thinspace{}\textnormal{:
+  }\bibpages{830\thinspace{}\textnormal{--}\thinspace{}836}\@.
+
+\bibitem{salton1975vector}
+\bibauthor{SALTON G\@, WONG A\@, YANG C-S}\@. \bibtitle{A vector space model
+  for automatic indexing}\bibmark{[J]}\@. \bibjournal{Communications of the
+  ACM}\@, \bibyear{1975}\@,
+  \bibvolume{18}\bibnumber{(11)}\thinspace{}\textnormal{:
+  }\bibpages{613\thinspace{}\textnormal{--}\thinspace{}620}\@.
+
+\bibitem{tsoumakas2011mulan}
+\bibauthor{TSOUMAKAS G\@, SPYROMITROS-XIOUFIS E\@, VILCEK J, et~al}\@.
+  \bibtitle{Mulan: A java library for multi-label learning}\bibmark{[J]}\@.
+  \bibjournal{The Journal of Machine Learning Research}\@, \bibyear{2011}\@,
+  \bibvolume{12}\thinspace{}\textnormal{:
+  }\bibpages{2411\thinspace{}\textnormal{--}\thinspace{}2414}\@.
+
+\end{thebibliography}
