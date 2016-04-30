@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 \providecommand{\bibauthor}[1]{#1}
 \providecommand{\bibeditor}[1]{#1}
 \providecommand{\bibtranslator}[1]{#1}
@@ -40,12 +40,26 @@
   An overview}\bibmark{[J]}\@. \bibjournal{Dept. of Informatics, Aristotle
   University of Thessaloniki, Greece}\@, \bibyear{2006}\@.
 
-\bibitem{silla2011survey}
-\bibauthor{SILLA~JR C~N\@, FREITAS A~A}\@. \bibtitle{A survey of hierarchical
-  classification across different application domains}\bibmark{[J]}\@.
-  \bibjournal{Data Mining and Knowledge Discovery}\@, \bibyear{2011}\@,
-  \bibvolume{22}\bibnumber{(1-2)}\thinspace{}\textnormal{:
-  }\bibpages{31\thinspace{}\textnormal{--}\thinspace{}72}\@.
+\bibitem{zhang2014review}
+\bibauthor{ZHANG M-L\@, ZHOU Z-H}\@. \bibtitle{A review on multi-label learning
+  algorithms}\bibmark{[J]}\@. \bibjournal{Knowledge and Data Engineering, IEEE
+  Transactions on}\@, \bibyear{2014}\@,
+  \bibvolume{26}\bibnumber{(8)}\thinspace{}\textnormal{:
+  }\bibpages{1819\thinspace{}\textnormal{--}\thinspace{}1837}\@.
+
+\bibitem{rousu2006kernel}
+\bibauthor{ROUSU J\@, SAUNDERS C\@, SZEDMAK S, et~al}\@. \bibtitle{Kernel-based
+  learning of hierarchical multilabel classification models}\bibmark{[J]}\@.
+  \bibjournal{The Journal of Machine Learning Research}\@, \bibyear{2006}\@,
+  \bibvolume{7}\thinspace{}\textnormal{:
+  }\bibpages{1601\thinspace{}\textnormal{--}\thinspace{}1626}\@.
+
+\bibitem{bi2012hierarchical}
+\bibauthor{BI W\@, KWOK J~T}\@. \bibtitle{Hierarchical multilabel
+  classification with minimum bayes risk}\bibmark{[C]}
+  //\thinspace{}\bibbooktitle{Data Mining (ICDM), 2012 IEEE 12th International
+  Conference on}\@. \bibyear{2012}\thinspace{}\textnormal{:
+  }\bibpages{101\thinspace{}\textnormal{--}\thinspace{}110}\@.
 
 \bibitem{barutcuoglu2006hierarchical}
 \bibauthor{BARUTCUOGLU Z\@, SCHAPIRE R~E\@, TROYANSKAYA O~G}\@.
@@ -54,12 +68,53 @@
   \bibvolume{22}\bibnumber{(7)}\thinspace{}\textnormal{:
   }\bibpages{830\thinspace{}\textnormal{--}\thinspace{}836}\@.
 
+\bibitem{vens2008decision}
+\bibauthor{VENS C\@, STRUYF J\@, SCHIETGAT L, et~al}\@. \bibtitle{Decision
+  trees for hierarchical multi-label classification}\bibmark{[J]}\@.
+  \bibjournal{Machine Learning}\@, \bibyear{2008}\@,
+  \bibvolume{73}\bibnumber{(2)}\thinspace{}\textnormal{:
+  }\bibpages{185\thinspace{}\textnormal{--}\thinspace{}214}\@.
+
 \bibitem{salton1975vector}
 \bibauthor{SALTON G\@, WONG A\@, YANG C-S}\@. \bibtitle{A vector space model
   for automatic indexing}\bibmark{[J]}\@. \bibjournal{Communications of the
   ACM}\@, \bibyear{1975}\@,
   \bibvolume{18}\bibnumber{(11)}\thinspace{}\textnormal{:
   }\bibpages{613\thinspace{}\textnormal{--}\thinspace{}620}\@.
+
+\bibitem{salton1988term}
+\bibauthor{SALTON G\@, BUCKLEY C}\@. \bibtitle{Term-weighting approaches in
+  automatic text retrieval}\bibmark{[J]}\@. \bibjournal{Information processing
+  \& management}\@, \bibyear{1988}\@,
+  \bibvolume{24}\bibnumber{(5)}\thinspace{}\textnormal{:
+  }\bibpages{513\thinspace{}\textnormal{--}\thinspace{}523}\@.
+
+\bibitem{yang1997comparative}
+\bibauthor{YANG Y\@, PEDERSEN J~O}\@. \bibtitle{A comparative study on feature
+  selection in text categorization}\bibmark{[C]}
+  //\thinspace{}\bibbooktitle{ICML\thinspace{}\textnormal{: }Vol~97}\@.
+  \bibyear{1997}\thinspace{}\textnormal{:
+  }\bibpages{412\thinspace{}\textnormal{--}\thinspace{}420}\@.
+
+\bibitem{chen2007document}
+\bibauthor{CHEN W\@, YAN J\@, ZHANG B, et~al}\@. \bibtitle{Document
+  transformation for multi-label feature selection in text
+  categorization}\bibmark{[C]} //\thinspace{}\bibbooktitle{Data Mining, 2007.
+  ICDM 2007. Seventh IEEE International Conference on}\@.
+  \bibyear{2007}\thinspace{}\textnormal{:
+  }\bibpages{451\thinspace{}\textnormal{--}\thinspace{}456}\@.
+
+\bibitem{spolaor2013evaluating}
+\bibauthor{SPOLA{\^O}R N\@, TSOUMAKAS G}\@. \bibtitle{Evaluating feature
+  selection methods for multi-label text classification}\bibmark{[J]}\@.
+  \bibjournal{BioASQ workhsop}\@, \bibyear{2013}\@.
+
+\bibitem{silla2011survey}
+\bibauthor{SILLA~JR C~N\@, FREITAS A~A}\@. \bibtitle{A survey of hierarchical
+  classification across different application domains}\bibmark{[J]}\@.
+  \bibjournal{Data Mining and Knowledge Discovery}\@, \bibyear{2011}\@,
+  \bibvolume{22}\bibnumber{(1-2)}\thinspace{}\textnormal{:
+  }\bibpages{31\thinspace{}\textnormal{--}\thinspace{}72}\@.
 
 \bibitem{tsoumakas2011mulan}
 \bibauthor{TSOUMAKAS G\@, SPYROMITROS-XIOUFIS E\@, VILCEK J, et~al}\@.

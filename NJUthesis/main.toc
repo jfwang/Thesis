@@ -13,24 +13,37 @@
 \contentsline {subsection}{\numberline {2.2.2}信息增益}{8}{subsection.2.2.2}
 \contentsline {subsection}{\numberline {2.2.3}互信息}{9}{subsection.2.2.3}
 \contentsline {subsection}{\numberline {2.2.4}卡方统计}{10}{subsection.2.2.4}
+\contentsline {section}{\numberline {2.3}本章小结}{10}{section.2.3}
 \contentsline {chapter}{\numberline {第三章\hspace {0.3em}}层次多标签学习}{11}{chapter.3}
 \contentsline {section}{\numberline {3.1}问题定义}{11}{section.3.1}
-\contentsline {section}{\numberline {3.2}学习方法}{11}{section.3.2}
-\contentsline {subsection}{\numberline {3.2.1}局部学习方法}{11}{subsection.3.2.1}
-\contentsline {subsection}{\numberline {3.2.2}全局学习方法}{11}{subsection.3.2.2}
-\contentsline {chapter}{\numberline {第四章\hspace {0.3em}}LocalBalance算法}{12}{chapter.4}
-\contentsline {section}{\numberline {4.1}算法描述}{12}{section.4.1}
-\contentsline {chapter}{\numberline {第五章\hspace {0.3em}}法律适用自动识别}{13}{chapter.5}
-\contentsline {section}{\numberline {5.1}实验数据}{13}{section.5.1}
-\contentsline {subsection}{\numberline {5.1.1}数据获取}{13}{subsection.5.1.1}
-\contentsline {subsection}{\numberline {5.1.2}数据预处理}{13}{subsection.5.1.2}
-\contentsline {subsection}{\numberline {5.1.3}标签处理}{15}{subsection.5.1.3}
-\contentsline {subsection}{\numberline {5.1.4}特征处理}{17}{subsection.5.1.4}
-\contentsline {section}{\numberline {5.2}实验平台}{17}{section.5.2}
-\contentsline {section}{\numberline {5.3}评价指标}{17}{section.5.3}
-\contentsline {section}{\numberline {5.4}实验结果}{17}{section.5.4}
-\contentsline {chapter}{\numberline {第六章\hspace {0.3em}}总结与展望}{18}{chapter.6}
-\contentsline {section}{\numberline {6.1}工作总结}{18}{section.6.1}
-\contentsline {section}{\numberline {6.2}改进方向}{18}{section.6.2}
-\contentsline {chapter}{参考文献}{19}{appendix*.4}
-\contentsline {chapter}{致\CTEX@spaceChar \CTEX@spaceChar 谢}{20}{appendix*.5}
+\contentsline {subsection}{\numberline {3.1.1}多标签学习}{11}{subsection.3.1.1}
+\contentsline {subsection}{\numberline {3.1.2}层次分类}{13}{subsection.3.1.2}
+\contentsline {subsection}{\numberline {3.1.3}层次多标签分类}{14}{subsection.3.1.3}
+\contentsline {section}{\numberline {3.2}评价指标}{14}{section.3.2}
+\contentsline {section}{\numberline {3.3}学习算法}{16}{section.3.3}
+\contentsline {subsection}{\numberline {3.3.1}多标签学习算法}{16}{subsection.3.3.1}
+\contentsline {subsubsection}{\numberline {3.3.1.1}问题转换算法}{17}{subsubsection.3.3.1.1}
+\contentsline {subsubsection}{\numberline {3.3.1.2}算法适应算法}{20}{subsubsection.3.3.1.2}
+\contentsline {subsection}{\numberline {3.3.2}局部学习方法}{22}{subsection.3.3.2}
+\contentsline {subsubsection}{\numberline {3.3.2.1}节点局部法}{22}{subsubsection.3.3.2.1}
+\contentsline {subsubsection}{\numberline {3.3.2.2}父节点局部法}{22}{subsubsection.3.3.2.2}
+\contentsline {subsubsection}{\numberline {3.3.2.3}层局部法}{22}{subsubsection.3.3.2.3}
+\contentsline {subsection}{\numberline {3.3.3}全局学习方法}{22}{subsection.3.3.3}
+\contentsline {section}{\numberline {3.4}本章小结}{22}{section.3.4}
+\contentsline {chapter}{\numberline {第四章\hspace {0.3em}}LocalBalance算法}{23}{chapter.4}
+\contentsline {section}{\numberline {4.1}算法描述}{23}{section.4.1}
+\contentsline {section}{\numberline {4.2}本章小结}{23}{section.4.2}
+\contentsline {chapter}{\numberline {第五章\hspace {0.3em}}法律适用自动识别}{24}{chapter.5}
+\contentsline {section}{\numberline {5.1}实验数据}{24}{section.5.1}
+\contentsline {subsection}{\numberline {5.1.1}数据获取}{24}{subsection.5.1.1}
+\contentsline {subsection}{\numberline {5.1.2}数据预处理}{24}{subsection.5.1.2}
+\contentsline {subsection}{\numberline {5.1.3}标签处理}{26}{subsection.5.1.3}
+\contentsline {subsection}{\numberline {5.1.4}特征处理}{28}{subsection.5.1.4}
+\contentsline {section}{\numberline {5.2}实验平台}{29}{section.5.2}
+\contentsline {section}{\numberline {5.3}评价指标}{29}{section.5.3}
+\contentsline {section}{\numberline {5.4}实验结果}{29}{section.5.4}
+\contentsline {chapter}{\numberline {第六章\hspace {0.3em}}总结与展望}{30}{chapter.6}
+\contentsline {section}{\numberline {6.1}工作总结}{30}{section.6.1}
+\contentsline {section}{\numberline {6.2}改进方向}{30}{section.6.2}
+\contentsline {chapter}{参考文献}{31}{appendix*.4}
+\contentsline {chapter}{致\CTEX@spaceChar \CTEX@spaceChar 谢}{33}{appendix*.5}
